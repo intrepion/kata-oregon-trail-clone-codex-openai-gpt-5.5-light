@@ -46,6 +46,19 @@ button:hover {
   min-height: 100vh;
 }
 
+.ledger-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #806f4f;
+}
+
+.ledger-panel {
+  width: min(760px, 100%);
+  border: 1px solid #c8b58c;
+}
+
 .scene-wrap {
   min-height: 100vh;
   background: #6f7651;
@@ -183,6 +196,28 @@ dd {
   padding-left: 22px;
   color: #554a34;
   line-height: 1.45;
+}
+
+.ledger-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ledger-list li {
+  display: grid;
+  gap: 6px;
+  border: 1px solid #c8b58c;
+  background: #fffaf0;
+  padding: 14px;
+}
+
+.ledger-list span,
+.ledger-list em,
+.ledger-list small {
+  color: #554a34;
 }
 
 @media (max-width: 820px) {

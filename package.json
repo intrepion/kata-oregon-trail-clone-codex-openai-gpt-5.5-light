@@ -6,11 +6,11 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "tsc && vite build",
-    "build:file": "vite build --base ./",
+    "build:file": "vite build --base ./ && node scripts/inline-direct-build.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "check": "npm run build && npm run test && npm run test:e2e"
+    "check": "npm run build:file && npm run test && npm run test:e2e"
   },
   "dependencies": {
     "vite": "^7.1.9"

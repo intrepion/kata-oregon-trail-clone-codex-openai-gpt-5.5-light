@@ -13,6 +13,9 @@ test("player can complete a thin departure-to-ending journey", async ({ page }) 
   await expect(page.getByRole("heading", { name: "Riverbend Landing" })).toBeVisible();
   await page.getByRole("button", { name: "Hunt" }).click();
   await expect(page.getByText(/spoiled before it could be packed/)).toBeVisible();
+  await page.reload();
+  await page.getByRole("button", { name: "Resume Journey" }).click();
+  await expect(page.getByText(/spoiled before it could be packed/)).toBeVisible();
   await page.getByLabel("Route branch").selectOption("ridge-cutoff");
   await page.getByRole("button", { name: "Travel to Prairie Lantern Fort" }).click();
   await page.getByRole("button", { name: "Hire ferry" }).click();
@@ -24,4 +27,6 @@ test("player can complete a thin departure-to-ending journey", async ({ page }) 
 
   await expect(page.getByRole("heading", { name: "Arrival" })).toBeVisible();
   await expect(page.getByText(/Trail Score/)).toBeVisible();
+  await page.getByRole("button", { name: "Trail Ledger" }).click();
+  await expect(page.getByText(/Willowglass Valley/)).toBeVisible();
 });

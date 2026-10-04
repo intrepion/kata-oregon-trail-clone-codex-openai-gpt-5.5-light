@@ -63,6 +63,15 @@ export type Journey = {
   score: number;
 };
 
+export type TrailLedgerEntry = {
+  endedAt: string;
+  title: string;
+  summary: string;
+  score: number;
+  survivors: number;
+  memorials: string[];
+};
+
 export type CrossingMethod = "ford" | "caulk" | "ferry" | "wait";
 export type CrossingAttempt = {
   method: CrossingMethod;
@@ -243,6 +252,36 @@ export function travelToNextLandmark(journey: Journey): Journey {
   }
 
   return updated;
+}
+
+export function serializeJourney(journey: Journey): string {
+  return JSON.stringify(journey);
+}
+
+export function reviveJourney(serialized: string): Journey {
+  const parsed = JSON.parse(serialized) as Journey;
+  return {
+    ...parsed,
+    activeBranch: parsed.activeBranch ?? routeBranches[0],
+    crossingResolved: Boolean(parsed.crossingResolved)
+  };
+}
+
+export function addEndingToLedger(ledger: TrailLedgerEntry[], journey: Journey): TrailLedgerEntry[] {
+  if (!journey.ending) {
+    return ledger;
+  }
+  const entry: TrailLedgerEntry = {
+    endedAt: new Date().toISOString(),
+    title: journey.ending.title,
+    summary: journey.ending.summary,
+    score: journey.score,
+    survivors: livingTravelers(journey).length,
+    memorials: journey.travelers
+      .filter((traveler) => !traveler.alive)
+      .map((traveler) => `${traveler.name} was lost on the trail.`)
+  };
+  return [entry, ...ledger].slice(0, 10);
 }
 
 export function chooseRouteBranch(journey: Journey, branchId: RouteBranch["id"]): Journey {

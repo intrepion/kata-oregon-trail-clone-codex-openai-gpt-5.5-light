@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { chooseRouteBranch, createJourney, resolveCrossing, hunt, travelToNextLandmark } from "../../src/journey";
+import {
+  addEndingToLedger,
+  chooseRouteBranch,
+  createJourney,
+  resolveCrossing,
+  hunt,
+  reviveJourney,
+  serializeJourney,
+  travelToNextLandmark
+} from "../../src/journey";
 
 describe("journey", () => {
   it("can travel from departure to arrival with the wagon and at least one traveler alive", () => {
@@ -72,5 +81,33 @@ describe("journey", () => {
     expect(journey.supplies.money).toBe(8);
     expect(journey.log[0]).toContain("safe but costly");
     expect(journey.wagon.integrity).toBe(100);
+  });
+
+  it("serializes a journey and records endings in the trail ledger", () => {
+    let journey = createJourney({
+      profession: "trader",
+      month: "April",
+      travelerNames: ["Ada", "Ben", "Clara", "Drew"],
+      supplies: {
+        food: 760,
+        ammunition: 70,
+        medicine: 8,
+        clothing: 9,
+        spareParts: 6,
+        money: 55
+      }
+    });
+
+    while (journey.ending === null) {
+      journey = travelToNextLandmark(journey);
+    }
+
+    const revived = reviveJourney(serializeJourney(journey));
+    const ledger = addEndingToLedger([], revived);
+
+    expect(revived.ending?.kind).toBe("arrival");
+    expect(ledger).toHaveLength(1);
+    expect(ledger[0].memorials).toEqual([]);
+    expect(ledger[0].score).toBeGreaterThan(0);
   });
 });

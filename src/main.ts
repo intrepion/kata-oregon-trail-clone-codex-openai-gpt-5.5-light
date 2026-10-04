@@ -1,18 +1,22 @@
 import "./styles.css";
 import {
   createJourney,
+  addEndingToLedger,
   chooseRouteBranch,
   currentLandmark,
   nextLandmark,
   resolveCrossing,
   route,
   routeBranches,
+  reviveJourney,
+  serializeJourney,
   suppliesForProfession,
   hunt,
   travelToNextLandmark,
   type Journey,
   type Month,
-  type Profession
+  type Profession,
+  type TrailLedgerEntry
 } from "./journey";
 
 const app = document.querySelector<HTMLDivElement>("#app");
@@ -23,6 +27,7 @@ if (!app) {
 
 const root = app;
 let journey: Journey | null = null;
+let ledger: TrailLedgerEntry[] = readLedger();
 
 renderDeparture();
 
@@ -35,6 +40,7 @@ function renderDeparture(): void {
       <section class="panel" aria-label="Control panel">
         <p class="eyebrow">Trailward</p>
         <h1>Prepare the wagon</h1>
+        ${savedJourneyExists() ? `<button id="resume" type="button">Resume Journey</button>` : ""}
         <form id="departure-form" class="stack">
           <label>Leader <input name="traveler0" value="Ada" /></label>
           <label>Second traveler <input name="traveler1" value="Ben" /></label>
@@ -60,6 +66,13 @@ function renderDeparture(): void {
     </main>
   `;
   drawOpeningScene();
+  document.querySelector<HTMLButtonElement>("#resume")?.addEventListener("click", () => {
+    const saved = storageGet("trailward.journey");
+    if (saved) {
+      journey = reviveJourney(saved);
+      renderJourney();
+    }
+  });
   document.querySelector<HTMLFormElement>("#departure-form")?.addEventListener("submit", (event) => {
     event.preventDefault();
     const formElement = event.currentTarget;
@@ -75,6 +88,7 @@ function renderDeparture(): void {
       travelerNames: [0, 1, 2, 3].map((index) => String(form.get(`traveler${index}`) ?? "")),
       supplies: suppliesForProfession(profession)
     });
+    saveJourney();
     renderJourney();
   });
 }
@@ -100,6 +114,11 @@ function renderJourney(): void {
     )
     .join("");
   const ending = journey.ending;
+  if (ending) {
+    recordEndingOnce(journey);
+  } else {
+    saveJourney();
+  }
 
   root.innerHTML = `
     <main class="shell">
@@ -121,7 +140,7 @@ function renderJourney(): void {
         <ul class="travelers">${travelerRows}</ul>
         ${
           ending
-            ? `<p class="score">Trail Score ${journey.score}</p><button id="new-journey">New Journey</button>`
+            ? `<p class="score">Trail Score ${journey.score}</p><div class="actions"><button id="ledger">Trail Ledger</button><button id="new-journey">New Journey</button></div>`
             : `
               ${journey.landmarkIndex === 0 ? branchControl(journey) : ""}
               <div class="actions">
@@ -158,7 +177,45 @@ function renderJourney(): void {
   });
   document.querySelector<HTMLButtonElement>("#new-journey")?.addEventListener("click", () => {
     journey = null;
+    storageRemove("trailward.journey");
     renderDeparture();
+  });
+  document.querySelector<HTMLButtonElement>("#ledger")?.addEventListener("click", () => {
+    renderLedger();
+  });
+}
+
+function renderLedger(): void {
+  root.innerHTML = `
+    <main class="ledger-shell">
+      <section class="panel ledger-panel">
+        <p class="eyebrow">Trail Ledger</p>
+        <h1>Journeys remembered</h1>
+        ${
+          ledger.length === 0
+            ? `<p class="voice">No endings have been recorded yet.</p>`
+            : `<ol class="ledger-list">${ledger
+                .map(
+                  (entry) => `
+                    <li>
+                      <strong>${entry.title}</strong>
+                      <span>${entry.summary}</span>
+                      <em>Trail Score ${entry.score} · ${entry.survivors} survivor${entry.survivors === 1 ? "" : "s"}</em>
+                      ${entry.memorials.length ? `<small>${entry.memorials.join(" ")}</small>` : ""}
+                    </li>`
+                )
+                .join("")}</ol>`
+        }
+        <button id="back">Back to Trail</button>
+      </section>
+    </main>
+  `;
+  document.querySelector<HTMLButtonElement>("#back")?.addEventListener("click", () => {
+    if (journey) {
+      renderJourney();
+    } else {
+      renderDeparture();
+    }
   });
 }
 
@@ -175,6 +232,63 @@ function branchControl(activeJourney: Journey): string {
       </select>
     </label>
   `;
+}
+
+function saveJourney(): void {
+  if (journey) {
+    storageSet("trailward.journey", serializeJourney(journey));
+  }
+}
+
+function savedJourneyExists(): boolean {
+  return storageGet("trailward.journey") !== null;
+}
+
+function readLedger(): TrailLedgerEntry[] {
+  const saved = storageGet("trailward.ledger");
+  if (!saved) {
+    return [];
+  }
+  try {
+    return JSON.parse(saved) as TrailLedgerEntry[];
+  } catch {
+    return [];
+  }
+}
+
+function recordEndingOnce(endedJourney: Journey): void {
+  const signature = `${endedJourney.ending?.title}:${endedJourney.trailDay}:${endedJourney.score}`;
+  if (storageGet("trailward.lastEnding") === signature) {
+    return;
+  }
+  ledger = addEndingToLedger(ledger, endedJourney);
+  storageSet("trailward.ledger", JSON.stringify(ledger));
+  storageSet("trailward.lastEnding", signature);
+  storageRemove("trailward.journey");
+}
+
+function storageGet(key: string): string | null {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function storageSet(key: string, value: string): void {
+  try {
+    window.localStorage.setItem(key, value);
+  } catch {
+    // Direct file launch can deny storage; the journey remains playable for the current session.
+  }
+}
+
+function storageRemove(key: string): void {
+  try {
+    window.localStorage.removeItem(key);
+  } catch {
+    // Direct file launch can deny storage; no cleanup is needed when storage is unavailable.
+  }
 }
 
 function drawOpeningScene(): void {
