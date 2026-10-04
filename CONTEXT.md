@@ -64,6 +64,10 @@ _Avoid_: Turn, tick, cycle
 The authored sequence of landmarks and route branches that defines where the party can travel during a journey.
 _Avoid_: Map, path, graph
 
+**Fictionalized Route**:
+An original trail geography that evokes river towns, prairie forts, divide passes, desert springs, mountain gates, and valley endings without claiming exact historical mapping.
+_Avoid_: Oregon Trail route, fantasy map, renamed landmarks
+
 **Route Branch**:
 A player-selected route alternative with distinct distance, supply, weather, crossing, or calamity risk.
 _Avoid_: Fork, alternate path, option
@@ -75,6 +79,10 @@ _Avoid_: Node, checkpoint, level
 **Calamity**:
 An adverse trail event that pressures the party through loss, sickness, injury, delay, damage, or death.
 _Avoid_: Random event, bad event, hazard
+
+**Trail Voice**:
+Short, concrete, period-flavored prose that remains readable to a modern player and avoids comedy, melodrama, or museum-caption distance.
+_Avoid_: Narration, copy, flavor text
 
 **Crossing**:
 A river or terrain obstacle where the player chooses a risky method for moving the wagon and party forward.
@@ -120,6 +128,14 @@ _Avoid_: Food setting, meals, diet
 Qualitative text that tells the player why a choice is safe, dangerous, costly, or uncertain without exposing exact probability math.
 _Avoid_: Odds, percentage, warning
 
+**Rest**:
+A player choice to spend trail days recovering traveler health or morale while consuming supplies and delaying arrival.
+_Avoid_: Sleep, camp, wait
+
+**Repair**:
+A wagon recovery action that consumes spare parts or landmark help to address wagon damage.
+_Avoid_: Fix, maintenance, mend
+
 **Profession**:
 The departure role that shapes starting money, difficulty, scoring expectations, and sometimes special advantages.
 _Avoid_: Class, job, archetype
@@ -155,6 +171,18 @@ _Avoid_: Save file, slot, checkpoint
 **Trail Ledger**:
 The local record of completed and failed journey endings used for scores, memorials, and player history.
 _Avoid_: High scores, stats, achievements
+
+**Memorial Entry**:
+A trail ledger record for a traveler death, preserving who died and the circumstance without stopping the journey.
+_Avoid_: Obituary, death log, grave marker
+
+**Arrival**:
+A successful ending where the wagon and at least one traveler reach the final landmark.
+_Avoid_: Win, victory, finish
+
+**Trail Score**:
+The ending score based on survivors, remaining supplies, profession difficulty, time, and hardships endured.
+_Avoid_: Points, grade, medal
 
 **Ending**:
 The resolved outcome of a journey, including arrival, death, abandonment, or other terminal failure.
