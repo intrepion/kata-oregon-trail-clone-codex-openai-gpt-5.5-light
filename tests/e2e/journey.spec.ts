@@ -11,6 +11,8 @@ test("player can complete a thin departure-to-ending journey", async ({ page }) 
   await page.getByRole("button", { name: "Start Journey" }).click();
 
   await expect(page.getByRole("heading", { name: "Riverbend Landing" })).toBeVisible();
+  await page.getByRole("button", { name: "Hunt" }).click();
+  await expect(page.getByText(/spoiled before it could be packed/)).toBeVisible();
 
   for (let i = 0; i < 5; i += 1) {
     await page.getByRole("button", { name: /Travel to/ }).click();

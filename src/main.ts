@@ -5,6 +5,7 @@ import {
   nextLandmark,
   route,
   suppliesForProfession,
+  hunt,
   travelToNextLandmark,
   type Journey,
   type Month,
@@ -117,7 +118,7 @@ function renderJourney(): void {
         ${
           ending
             ? `<p class="score">Trail Score ${journey.score}</p><button id="new-journey">New Journey</button>`
-            : `<button id="travel">${target ? `Travel to ${target.name}` : "Finish Journey"}</button>`
+            : `<div class="actions"><button id="hunt">Hunt</button><button id="travel">${target ? `Travel to ${target.name}` : "Finish Journey"}</button></div>`
         }
         <ol class="log">${journey.log.slice(0, 4).map((entry) => `<li>${entry}</li>`).join("")}</ol>
       </section>
@@ -127,6 +128,10 @@ function renderJourney(): void {
   drawJourneyScene(journey);
   document.querySelector<HTMLButtonElement>("#travel")?.addEventListener("click", () => {
     journey = travelToNextLandmark(journey as Journey);
+    renderJourney();
+  });
+  document.querySelector<HTMLButtonElement>("#hunt")?.addEventListener("click", () => {
+    journey = hunt(journey as Journey, { accuracy: 0.82, shots: 8 });
     renderJourney();
   });
   document.querySelector<HTMLButtonElement>("#new-journey")?.addEventListener("click", () => {

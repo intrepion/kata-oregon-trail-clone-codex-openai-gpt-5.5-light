@@ -54,6 +54,11 @@ export type Journey = {
   score: number;
 };
 
+export type HuntAttempt = {
+  accuracy: number;
+  shots: number;
+};
+
 export type Departure = {
   profession: Profession;
   month: Month;
@@ -206,6 +211,39 @@ export function travelToNextLandmark(journey: Journey): Journey {
   }
 
   return updated;
+}
+
+export function hunt(journey: Journey, attempt: HuntAttempt): Journey {
+  if (journey.ending) {
+    return journey;
+  }
+  const shots = Math.max(0, Math.min(Math.floor(attempt.shots), journey.supplies.ammunition));
+  if (shots === 0) {
+    return {
+      ...journey,
+      log: ["No ammunition remained for the hunt.", ...journey.log]
+    };
+  }
+  const biome = currentLandmark(journey).biome;
+  const scarcity = biome.includes("dry") || biome.includes("mountain") ? 0.72 : 1;
+  const profession = journey.profession === "scout" ? 1.12 : journey.profession === "homesteader" ? 0.9 : 1;
+  const accuracy = Math.max(0, Math.min(1, attempt.accuracy));
+  const gathered = Math.floor(shots * accuracy * 20 * scarcity * profession);
+  const carried = Math.min(gathered, 120);
+  const spoiled = Math.max(0, gathered - carried);
+  const result = spoiled > 0
+    ? `The hunt brought in ${gathered} pounds, but ${spoiled} spoiled before it could be packed.`
+    : `The hunt brought in ${carried} pounds of food.`;
+  return {
+    ...journey,
+    trailDay: journey.trailDay + 1,
+    supplies: {
+      ...journey.supplies,
+      ammunition: journey.supplies.ammunition - shots,
+      food: journey.supplies.food + carried
+    },
+    log: [result, ...journey.log]
+  };
 }
 
 function finishJourney(journey: Journey): Journey {
