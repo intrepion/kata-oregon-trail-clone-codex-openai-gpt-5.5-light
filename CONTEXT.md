@@ -24,6 +24,30 @@ _Avoid_: Vehicle, inventory container, cart
 A consumable or tradeable resource carried by the wagon, such as food, ammunition, medicine, clothing, spare parts, or money.
 _Avoid_: Item, good, asset
 
+**Food**:
+The supply consumed through rations to sustain travelers during trail days.
+_Avoid_: Meals, provisions, calories
+
+**Ammunition**:
+The supply spent during hunts and sometimes traded or lost during calamities.
+_Avoid_: Bullets, ammo, shots
+
+**Medicine**:
+The supply used to treat or improve traveler conditions.
+_Avoid_: Meds, remedies, first aid
+
+**Clothing**:
+The supply that protects travelers from cold, exposure, and weather-related hardship.
+_Avoid_: Clothes, garments, gear
+
+**Spare Part**:
+A wagon repair supply, such as a wheel, axle, or tongue, used to recover from wagon damage.
+_Avoid_: Repair item, component, part
+
+**Money**:
+The supply spent for purchases, ferries, trades, and other paid choices.
+_Avoid_: Cash, dollars, currency
+
 **Departure**:
 The pre-journey setup where the player chooses profession, traveler names, starting month, and starting supplies.
 _Avoid_: Setup, character creation, loadout
@@ -52,9 +76,21 @@ _Avoid_: Random event, bad event, hazard
 A river or terrain obstacle where the player chooses a risky method for moving the wagon and party forward.
 _Avoid_: Obstacle, river event, traversal challenge
 
+**Crossing Method**:
+The player's chosen approach to a crossing, such as fording, caulking, hiring a ferry, or waiting.
+_Avoid_: Crossing option, tactic, solution
+
 **Hunt**:
 A short action scene where the player spends ammunition and time to gather food.
 _Avoid_: Minigame, shooter, forage
+
+**Spoilage**:
+The loss of excess hunted food that the wagon cannot preserve or carry forward.
+_Avoid_: Waste, decay, rot
+
+**Biome**:
+The route environment that shapes hunt scarcity, weather patterns, and some calamity risks.
+_Avoid_: Region, terrain type, zone
 
 **Health**:
 A traveler's visible physical condition, affected by rations, pace, weather, sickness, injury, rest, and medicine.
@@ -75,6 +111,10 @@ _Avoid_: Speed, difficulty, movement rate
 **Rations**:
 The player's chosen food distribution level, trading supply conservation against traveler health and morale.
 _Avoid_: Food setting, meals, diet
+
+**Risk Signal**:
+Qualitative text that tells the player why a choice is safe, dangerous, costly, or uncertain without exposing exact probability math.
+_Avoid_: Odds, percentage, warning
 
 **Profession**:
 The departure role that shapes starting money, difficulty, scoring expectations, and sometimes special advantages.
