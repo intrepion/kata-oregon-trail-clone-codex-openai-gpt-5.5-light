@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test("player can complete a thin departure-to-ending journey", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/dev.html");
 
   await page.getByLabel("Leader").fill("Ada");
   await page.getByLabel("Second traveler").fill("Ben");

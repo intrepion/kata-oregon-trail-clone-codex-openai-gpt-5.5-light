@@ -4,9 +4,104 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Trailward</title>
+
+    <style>
+:root{color:#26323a;background:#efe4c8;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif}*{box-sizing:border-box}body{margin:0;min-width:320px;min-height:100vh}button,input,select{font:inherit}button{border:0;background:#274d44;color:#f8f0dc;min-height:44px;padding:0 18px;cursor:pointer;font-weight:750}button:hover{background:#173932}.actions{display:grid;grid-template-columns:.8fr 1.2fr;gap:10px}.shell{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(360px,.65fr);min-height:100vh}.ledger-shell{min-height:100vh;display:grid;place-items:center;padding:24px;background:#806f4f}.ledger-panel{width:min(760px,100%);border:1px solid #c8b58c}.scene-wrap{min-height:100vh;background:#6f7651}canvas{display:block;width:100%;height:100%;min-height:100vh}.panel{display:flex;flex-direction:column;gap:18px;padding:32px;background:#f5ecd8;border-left:1px solid #c8b58c;overflow-y:auto}.eyebrow{margin:0;color:#6b5c43;font-size:.78rem;font-weight:800;letter-spacing:0;text-transform:uppercase}h1{margin:0;color:#1e2a30;font-family:Georgia,Times New Roman,serif;font-size:clamp(2rem,6vw,4.4rem);line-height:.95}.voice{margin:0;color:#4e432f;font-family:Georgia,Times New Roman,serif;font-size:1.12rem;line-height:1.5}.stack{display:grid;gap:14px}label{display:grid;gap:6px;color:#4a3f2b;font-weight:750}input,select{width:100%;min-height:42px;border:1px solid #b8a57f;border-radius:0;background:#fffaf0;color:#26323a;padding:8px 10px}.supplies{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0}.supplies div{border:1px solid #c8b58c;background:#fff7e7;padding:10px}dt{color:#6b5c43;font-size:.72rem;font-weight:800;text-transform:uppercase}dd{margin:2px 0 0;font-size:1.18rem;font-weight:800}.travelers{display:grid;gap:8px;padding:0;margin:0;list-style:none}.travelers li{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;border:1px solid #c8b58c;background:#fffaf0;padding:10px}.travelers em{grid-column:1 / -1;color:#63563d;font-style:normal;font-size:.9rem}.travelers .lost{opacity:.58}.score{margin:0;color:#274d44;font-size:1.5rem;font-weight:850}.log{margin:0;padding-left:22px;color:#554a34;line-height:1.45}.ledger-list{display:grid;gap:12px;margin:0;padding:0;list-style:none}.ledger-list li{display:grid;gap:6px;border:1px solid #c8b58c;background:#fffaf0;padding:14px}.ledger-list span,.ledger-list em,.ledger-list small{color:#554a34}@media(max-width:820px){.shell{grid-template-columns:1fr}.scene-wrap,canvas{min-height:42vh}.panel{border-left:0;border-top:1px solid #c8b58c;padding:22px}}
+
+</style>
   </head>
   <body>
     <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+  <script>
+(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const i of document.querySelectorAll('link[rel="modulepreload"]'))a(i);new MutationObserver(i=>{for(const o of i)if(o.type==="childList")for(const s of o.addedNodes)s.tagName==="LINK"&&s.rel==="modulepreload"&&a(s)}).observe(document,{childList:!0,subtree:!0});function n(i){const o={};return i.integrity&&(o.integrity=i.integrity),i.referrerPolicy&&(o.referrerPolicy=i.referrerPolicy),i.crossOrigin==="use-credentials"?o.credentials="include":i.crossOrigin==="anonymous"?o.credentials="omit":o.credentials="same-origin",o}function a(i){if(i.ep)return;i.ep=!0;const o=n(i);fetch(i.href,o)}})();const p=[{id:"riverbend",name:"Riverbend Landing",milesFromStart:0,biome:"river town",text:"The river is brown with snowmelt. Wagons crowd the bank, waiting for dry roads."},{id:"prairie-fort",name:"Prairie Lantern Fort",milesFromStart:120,biome:"prairie",text:"Lanterns burn late over the stockade. Traders know which wheels broke on the west road."},{id:"divide-pass",name:"Ash Divide Pass",milesFromStart:285,biome:"high plains",text:"Wind combs the grass flat. The pass ahead looks narrow enough to scrape the sky."},{id:"desert-spring",name:"Mercy Spring",milesFromStart:420,biome:"dry basin",text:"A cold spring threads through alkali dust. Everyone drinks before speaking."},{id:"mountain-gate",name:"Needle Gate",milesFromStart:585,biome:"mountain",text:"Pines crowd the slope. Snow still sleeps in the shaded gullies."},{id:"valley-end",name:"Willowglass Valley",milesFromStart:720,biome:"valley",text:"Green fields open below the ridge. The wagon groans, but the valley is real."}],h=[{id:"valley-road",name:"Valley Road",distanceModifier:1,risk:"longer but settled"},{id:"ridge-cutoff",name:"Ridge Cutoff",distanceModifier:.82,risk:"shorter but exposed"}],F={homesteader:{food:620,ammunition:50,medicine:5,clothing:7,spareParts:4,money:20},trader:{food:760,ammunition:70,medicine:8,clothing:9,spareParts:6,money:55},scout:{food:680,ammunition:90,medicine:6,clothing:8,spareParts:5,money:30}};function C(e){return{...F[e]}}function D(e){const t=e.travelerNames.map(n=>n.trim()).filter(Boolean).slice(0,4);for(;t.length<4;)t.push(`Traveler ${t.length+1}`);return{profession:e.profession,month:e.month,trailDay:1,miles:0,landmarkIndex:0,travelers:t.map(n=>({name:n,health:100,morale:82,alive:!0,conditions:[]})),wagon:{integrity:100},supplies:{...e.supplies},pace:"steady",rations:"fair",activeBranch:h[0],crossingResolved:!1,log:[`Departed Riverbend Landing in ${e.month}.`],ending:null,score:0}}function y(e){return p[e.landmarkIndex]}function M(e){return p[e.landmarkIndex+1]??null}function A(e){if(e.ending)return e;const t=M(e);if(!t)return $(e);const n=(t.milesFromStart-e.miles)*(e.activeBranch?.distanceModifier??1),a=Math.max(2,Math.ceil(n/(e.pace==="hard"?24:18))),i=a*v(e).length*z(e.rations),o=V(e,t,a),s=e.travelers.map((c,f)=>K(c,o+f%2,i>e.supplies.food)),l={...e,trailDay:e.trailDay+a,miles:t.milesFromStart,landmarkIndex:e.landmarkIndex+1,travelers:s,wagon:{integrity:Math.max(1,e.wagon.integrity-Math.max(0,o-4))},supplies:{...e.supplies,food:Math.max(0,e.supplies.food-i)},log:[`${a} trail days to ${t.name}. ${t.text}`,...e.log]};return!l.travelers.some(c=>c.alive)||l.wagon.integrity<=0?{...l,ending:{kind:"failure",title:"Trail Lost",summary:"The wagon could not carry the party any farther."},score:0}:l.landmarkIndex===p.length-1?$(l):l}function q(e){return JSON.stringify(e)}function B(e){const t=JSON.parse(e);return{...t,activeBranch:t.activeBranch??h[0],crossingResolved:!!t.crossingResolved}}function J(e,t){return t.ending?[{endedAt:new Date().toISOString(),title:t.ending.title,summary:t.ending.summary,score:t.score,survivors:v(t).length,memorials:t.travelers.filter(a=>!a.alive).map(a=>`${a.name} was lost on the trail.`)},...e].slice(0,10):e}function N(e,t){const n=h.find(a=>a.id===t)??h[0];return{...e,activeBranch:n,log:[`Route set to ${n.name}: ${n.risk}.`,...e.log]}}function O(e,t){if(e.ending||e.crossingResolved)return e;const n=W(),a=Math.max(.05,n.baseRisk-(e.profession==="scout"?.08:0)),i=t.riskRoll<a,o=Math.max(0,e.supplies.money-n.cost),s=i?n.wagonLoss:0,l=i?`${n.label} turned dangerous. The wagon took damage in the crossing.`:`${n.label} proved ${n.signal}.`;return{...e,crossingResolved:!0,wagon:{integrity:Math.max(1,e.wagon.integrity-s)},supplies:{...e.supplies,money:o},log:[l,...e.log]}}function H(e,t){if(e.ending)return e;const n=Math.max(0,Math.min(Math.floor(t.shots),e.supplies.ammunition));if(n===0)return{...e,log:["No ammunition remained for the hunt.",...e.log]};const a=y(e).biome,i=a.includes("dry")||a.includes("mountain")?.72:1,o=e.profession==="scout"?1.12:e.profession==="homesteader"?.9:1,s=Math.max(0,Math.min(1,t.accuracy)),l=Math.floor(n*s*20*i*o),c=Math.min(l,120),f=Math.max(0,l-c),I=f>0?`The hunt brought in ${l} pounds, but ${f} spoiled before it could be packed.`:`The hunt brought in ${c} pounds of food.`;return{...e,trailDay:e.trailDay+1,supplies:{...e.supplies,ammunition:e.supplies.ammunition-n,food:e.supplies.food+c},log:[I,...e.log]}}function $(e){const t=v(e).length,n=e.wagon.integrity>0&&t>0;return{...e,ending:{kind:n?"arrival":"failure",title:n?"Arrival":"Trail Lost",summary:n?`${t} traveler${t===1?"":"s"} reached Willowglass Valley with the wagon.`:"The journey ended before the valley."},score:n?G(e):0}}function W(e){return{label:"Hiring the ferry",signal:"safe but costly",baseRisk:.04,cost:12,wagonLoss:8}}function G(e){const t=v(e).length,n=Math.floor(e.supplies.food/8)+e.supplies.medicine*5+e.supplies.spareParts*8,a=e.profession==="homesteader"?180:e.profession==="scout"?90:40,i=Math.max(0,220-e.trailDay*2);return t*250+n+a+i+e.wagon.integrity}function v(e){return e.travelers.filter(t=>t.alive)}function z(e){return e==="meager"?1.4:e==="full"?2.6:2}function V(e,t,n){const a=e.month==="March"?2:e.month==="May"?1:0,i=t.biome.includes("mountain")||t.biome.includes("dry")?3:1,o=e.pace==="hard"?2:0,s=e.supplies.food<n*6?3:0;return a+i+o+s}function K(e,t,n){if(!e.alive)return e;const a=t+(n?8:0),i=Math.ceil(t/2)+(n?5:0),o=Math.max(0,e.health-a),s=Math.max(0,e.morale-i),l=[...e.conditions];return o<55&&l.length===0&&l.push("trail fever"),{...e,health:o,morale:s,alive:o>0,conditions:l}}const T=document.querySelector("#app");if(!T)throw new Error("Missing app root");const S=T;let r=null,m=X();g();function g(){S.innerHTML=`
+    <main class="shell">
+      <section class="scene-wrap" aria-label="Trail scene">
+        <canvas id="trail-scene" width="960" height="540"></canvas>
+      </section>
+      <section class="panel" aria-label="Control panel">
+        <p class="eyebrow">Trailward</p>
+        <h1>Prepare the wagon</h1>
+        ${Q()?'<button id="resume" type="button">Resume Journey</button>':""}
+        <form id="departure-form" class="stack">
+          <label>Leader <input name="traveler0" value="Ada" /></label>
+          <label>Second traveler <input name="traveler1" value="Ben" /></label>
+          <label>Third traveler <input name="traveler2" value="Clara" /></label>
+          <label>Fourth traveler <input name="traveler3" value="Drew" /></label>
+          <label>Profession
+            <select name="profession">
+              <option value="homesteader">Homesteader</option>
+              <option value="trader" selected>Trader</option>
+              <option value="scout">Scout</option>
+            </select>
+          </label>
+          <label>Starting month
+            <select name="month">
+              <option value="March">March</option>
+              <option value="April" selected>April</option>
+              <option value="May">May</option>
+            </select>
+          </label>
+          <button type="submit">Start Journey</button>
+        </form>
+      </section>
+    </main>
+  `,Z(),document.querySelector("#resume")?.addEventListener("click",()=>{const e=b("trailward.journey");e&&(r=B(e),u())}),document.querySelector("#departure-form")?.addEventListener("submit",e=>{e.preventDefault();const t=e.currentTarget;if(!(t instanceof HTMLFormElement))return;const n=new FormData(t),a=n.get("profession"),i=n.get("month");r=D({profession:a,month:i,travelerNames:[0,1,2,3].map(o=>String(n.get(`traveler${o}`)??"")),supplies:C(a)}),k(),u()})}function u(){if(!r){g();return}const e=y(r),t=M(r),n=r.landmarkIndex===1&&!r.crossingResolved,a=r.travelers.map(o=>`
+        <li class="${o.alive?"":"lost"}">
+          <strong>${d(o.name)}</strong>
+          <span>Health ${o.health}</span>
+          <span>Morale ${o.morale}</span>
+          <em>${o.alive?d(o.conditions.join(", ")||"steady"):"lost"}</em>
+        </li>`).join(""),i=r.ending;i?Y(r):k(),S.innerHTML=`
+    <main class="shell">
+      <section class="scene-wrap" aria-label="Trail scene">
+        <canvas id="trail-scene" width="960" height="540"></canvas>
+      </section>
+      <section class="panel" aria-label="Control panel">
+        <p class="eyebrow">Day ${r.trailDay} · ${r.miles} miles</p>
+        <h1>${d(i?i.title:e.name)}</h1>
+        <p class="voice">${d(i?i.summary:e.text)}</p>
+        <dl class="supplies">
+          <div><dt>Food</dt><dd>${Math.floor(r.supplies.food)}</dd></div>
+          <div><dt>Ammunition</dt><dd>${r.supplies.ammunition}</dd></div>
+          <div><dt>Medicine</dt><dd>${r.supplies.medicine}</dd></div>
+          <div><dt>Clothing</dt><dd>${r.supplies.clothing}</dd></div>
+          <div><dt>Parts</dt><dd>${r.supplies.spareParts}</dd></div>
+          <div><dt>Money</dt><dd>${r.supplies.money}</dd></div>
+        </dl>
+        <ul class="travelers">${a}</ul>
+        ${i?`<p class="score">Trail Score ${r.score}</p><div class="actions"><button id="ledger">Trail Ledger</button><button id="new-journey">New Journey</button></div>`:`
+              ${r.landmarkIndex===0?_(r):""}
+              <div class="actions">
+                <button id="hunt">Hunt</button>
+                ${n?'<button id="ferry">Hire ferry</button>':`<button id="travel">${t?`Travel to ${t.name}`:"Finish Journey"}</button>`}
+              </div>
+            `}
+        <ol class="log">${r.log.slice(0,4).map(o=>`<li>${d(o)}</li>`).join("")}</ol>
+      </section>
+    </main>
+  `,x(r),document.querySelector("#travel")?.addEventListener("click",()=>{r=A(r),u()}),document.querySelector("#hunt")?.addEventListener("click",()=>{r=H(r,{accuracy:.82,shots:8}),u()}),document.querySelector("#route-branch")?.addEventListener("change",o=>{const s=o.currentTarget;s instanceof HTMLSelectElement&&(r=N(r,s.value),u())}),document.querySelector("#ferry")?.addEventListener("click",()=>{r=O(r,{riskRoll:.92}),u()}),document.querySelector("#new-journey")?.addEventListener("click",()=>{r=null,L("trailward.journey"),g()}),document.querySelector("#ledger")?.addEventListener("click",()=>{U()})}function U(){S.innerHTML=`
+    <main class="ledger-shell">
+      <section class="panel ledger-panel">
+        <p class="eyebrow">Trail Ledger</p>
+        <h1>Journeys remembered</h1>
+        ${m.length===0?'<p class="voice">No endings have been recorded yet.</p>':`<ol class="ledger-list">${m.map(e=>`
+                    <li>
+                      <strong>${d(e.title)}</strong>
+                      <span>${d(e.summary)}</span>
+                      <em>Trail Score ${e.score} · ${e.survivors} survivor${e.survivors===1?"":"s"}</em>
+                      ${e.memorials.length?`<small>${d(e.memorials.join(" "))}</small>`:""}
+                    </li>`).join("")}</ol>`}
+        <button id="back">Back to Trail</button>
+      </section>
+    </main>
+  `,document.querySelector("#back")?.addEventListener("click",()=>{r?u():g()})}function _(e){return`
+    <label>Route branch
+      <select id="route-branch">
+        ${h.map(t=>`<option value="${t.id}" ${e.activeBranch?.id===t.id?"selected":""}>${t.name} - ${t.risk}</option>`).join("")}
+      </select>
+    </label>
+  `}function d(e){return e.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;")}function k(){r&&w("trailward.journey",q(r))}function Q(){return b("trailward.journey")!==null}function X(){const e=b("trailward.ledger");if(!e)return[];try{return JSON.parse(e)}catch{return[]}}function Y(e){const t=`${e.ending?.title}:${e.trailDay}:${e.score}`;b("trailward.lastEnding")!==t&&(m=J(m,e),w("trailward.ledger",JSON.stringify(m)),w("trailward.lastEnding",t),L("trailward.journey"))}function b(e){try{return window.localStorage.getItem(e)}catch{return null}}function w(e,t){try{window.localStorage.setItem(e,t)}catch{}}function L(e){try{window.localStorage.removeItem(e)}catch{}}function Z(){const e=document.querySelector("#trail-scene"),t=e?.getContext("2d");!e||!t||(P(t,e),R(t,e),E(t,330,335),ee(t,e))}function x(e){const t=document.querySelector("#trail-scene"),n=t?.getContext("2d");if(!t||!n)return;const a=e.miles/p[p.length-1].milesFromStart;P(n,t),R(n,t),j(n,t,a),E(n,150+a*610,338-Math.sin(a*Math.PI)*45),n.fillStyle="#26323a",n.font="24px Georgia, serif",n.fillText(y(e).name,44,64)}function P(e,t){const n=e.createLinearGradient(0,0,0,t.height);n.addColorStop(0,"#93b8c8"),n.addColorStop(.62,"#e7d9b7"),n.addColorStop(1,"#806f4f"),e.fillStyle=n,e.fillRect(0,0,t.width,t.height),e.fillStyle="#f6eed2",e.beginPath(),e.arc(760,92,46,0,Math.PI*2),e.fill()}function R(e,t){e.fillStyle="#887448",e.fillRect(0,350,t.width,t.height-350),e.fillStyle="#5a6b46",e.beginPath(),e.moveTo(0,350),e.lineTo(180,240),e.lineTo(330,350),e.lineTo(0,350),e.fill(),e.fillStyle="#6f7651",e.beginPath(),e.moveTo(290,350),e.lineTo(530,190),e.lineTo(790,350),e.lineTo(290,350),e.fill()}function j(e,t,n){e.strokeStyle="#d7c08e",e.lineWidth=22,e.beginPath(),e.moveTo(20,500),e.bezierCurveTo(250,410,360,460,520,380),e.bezierCurveTo(650,315,710,395,930,300),e.stroke(),e.fillStyle="#26323a",e.fillRect(90,478,Math.max(24,n*760),8)}function ee(e,t){e.fillStyle="rgba(53, 113, 130, 0.85)",e.beginPath(),e.moveTo(0,430),e.bezierCurveTo(260,380,420,530,t.width,450),e.lineTo(t.width,t.height),e.lineTo(0,t.height),e.fill()}function E(e,t,n){e.fillStyle="#3e2f24",e.fillRect(t,n,118,42),e.fillStyle="#ede1c6",e.beginPath(),e.ellipse(t+58,n+4,62,45,Math.PI,0,Math.PI),e.fill(),e.strokeStyle="#3e2f24",e.lineWidth=4,e.stroke(),e.fillStyle="#211812",e.beginPath(),e.arc(t+24,n+45,16,0,Math.PI*2),e.arc(t+92,n+45,16,0,Math.PI*2),e.fill()}
+
+</script>
+</body>
 </html>
