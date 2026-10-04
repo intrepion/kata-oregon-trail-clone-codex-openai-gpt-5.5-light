@@ -52,6 +52,10 @@ _Avoid_: Cash, dollars, currency
 The pre-journey setup where the player chooses profession, traveler names, starting month, and starting supplies.
 _Avoid_: Setup, character creation, loadout
 
+**Journey Scale**:
+The intended real-time duration of a successful journey, long enough for attrition and attachment but short enough to replay after failure.
+_Avoid_: Session length, runtime, playtime
+
 **Trail Day**:
 The basic unit of journey time, during which travel progress, supply consumption, health changes, weather, and calamities may occur.
 _Avoid_: Turn, tick, cycle
@@ -119,6 +123,30 @@ _Avoid_: Odds, percentage, warning
 **Profession**:
 The departure role that shapes starting money, difficulty, scoring expectations, and sometimes special advantages.
 _Avoid_: Class, job, archetype
+
+**Homesteader**:
+A starting profession defined by tight supply pressure and a straightforward survival challenge.
+_Avoid_: Farmer, settler, beginner
+
+**Trader**:
+A starting profession defined by money, trade leverage, and stronger purchasing flexibility.
+_Avoid_: Merchant, banker, shopkeeper
+
+**Scout**:
+A starting profession defined by travel awareness, hunting competence, and route-risk advantages.
+_Avoid_: Guide, hunter, ranger
+
+**Trail Scene**:
+A canvas-rendered visual scene for travel, landmarks, hunting, crossings, and journey atmosphere.
+_Avoid_: View, screen, canvas
+
+**Control Panel**:
+A DOM-rendered interface area for departure forms, status, choices, saves, and other precise text or controls.
+_Avoid_: UI, dashboard, overlay
+
+**Original Trail Fiction**:
+The game's original names, event text, landmark phrasing, and presentation that evoke trail survival without copying Oregon Trail's protected expression.
+_Avoid_: Classic text, official names, parody names
 
 **Journey Save**:
 The locally stored in-progress journey that lets the player leave and resume the current trip.
