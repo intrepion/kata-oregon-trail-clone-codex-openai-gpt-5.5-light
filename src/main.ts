@@ -106,10 +106,10 @@ function renderJourney(): void {
     .map(
       (traveler) => `
         <li class="${traveler.alive ? "" : "lost"}">
-          <strong>${traveler.name}</strong>
+          <strong>${escapeHtml(traveler.name)}</strong>
           <span>Health ${traveler.health}</span>
           <span>Morale ${traveler.morale}</span>
-          <em>${traveler.alive ? traveler.conditions.join(", ") || "steady" : "lost"}</em>
+          <em>${traveler.alive ? escapeHtml(traveler.conditions.join(", ") || "steady") : "lost"}</em>
         </li>`
     )
     .join("");
@@ -127,8 +127,8 @@ function renderJourney(): void {
       </section>
       <section class="panel" aria-label="Control panel">
         <p class="eyebrow">Day ${journey.trailDay} · ${journey.miles} miles</p>
-        <h1>${ending ? ending.title : landmark.name}</h1>
-        <p class="voice">${ending ? ending.summary : landmark.text}</p>
+        <h1>${escapeHtml(ending ? ending.title : landmark.name)}</h1>
+        <p class="voice">${escapeHtml(ending ? ending.summary : landmark.text)}</p>
         <dl class="supplies">
           <div><dt>Food</dt><dd>${Math.floor(journey.supplies.food)}</dd></div>
           <div><dt>Ammunition</dt><dd>${journey.supplies.ammunition}</dd></div>
@@ -149,7 +149,7 @@ function renderJourney(): void {
               </div>
             `
         }
-        <ol class="log">${journey.log.slice(0, 4).map((entry) => `<li>${entry}</li>`).join("")}</ol>
+        <ol class="log">${journey.log.slice(0, 4).map((entry) => `<li>${escapeHtml(entry)}</li>`).join("")}</ol>
       </section>
     </main>
   `;
@@ -198,10 +198,10 @@ function renderLedger(): void {
                 .map(
                   (entry) => `
                     <li>
-                      <strong>${entry.title}</strong>
-                      <span>${entry.summary}</span>
+                      <strong>${escapeHtml(entry.title)}</strong>
+                      <span>${escapeHtml(entry.summary)}</span>
                       <em>Trail Score ${entry.score} · ${entry.survivors} survivor${entry.survivors === 1 ? "" : "s"}</em>
-                      ${entry.memorials.length ? `<small>${entry.memorials.join(" ")}</small>` : ""}
+                      ${entry.memorials.length ? `<small>${escapeHtml(entry.memorials.join(" "))}</small>` : ""}
                     </li>`
                 )
                 .join("")}</ol>`
@@ -232,6 +232,15 @@ function branchControl(activeJourney: Journey): string {
       </select>
     </label>
   `;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 function saveJourney(): void {
