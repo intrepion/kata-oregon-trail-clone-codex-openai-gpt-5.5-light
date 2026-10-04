@@ -32,6 +32,13 @@ export type Landmark = {
   text: string;
 };
 
+export type RouteBranch = {
+  id: "valley-road" | "ridge-cutoff";
+  name: string;
+  distanceModifier: number;
+  risk: string;
+};
+
 export type Ending = {
   kind: "arrival" | "failure";
   title: string;
@@ -49,9 +56,17 @@ export type Journey = {
   supplies: Supplies;
   pace: Pace;
   rations: Rations;
+  activeBranch: RouteBranch | null;
+  crossingResolved: boolean;
   log: string[];
   ending: Ending | null;
   score: number;
+};
+
+export type CrossingMethod = "ford" | "caulk" | "ferry" | "wait";
+export type CrossingAttempt = {
+  method: CrossingMethod;
+  riskRoll: number;
 };
 
 export type HuntAttempt = {
@@ -111,6 +126,21 @@ export const route: Landmark[] = [
   }
 ];
 
+export const routeBranches: RouteBranch[] = [
+  {
+    id: "valley-road",
+    name: "Valley Road",
+    distanceModifier: 1,
+    risk: "longer but settled"
+  },
+  {
+    id: "ridge-cutoff",
+    name: "Ridge Cutoff",
+    distanceModifier: 0.82,
+    risk: "shorter but exposed"
+  }
+];
+
 const professionSupplies: Record<Profession, Supplies> = {
   homesteader: { food: 620, ammunition: 50, medicine: 5, clothing: 7, spareParts: 4, money: 20 },
   trader: { food: 760, ammunition: 70, medicine: 8, clothing: 9, spareParts: 6, money: 55 },
@@ -147,6 +177,8 @@ export function createJourney(departure: Departure): Journey {
     supplies: { ...departure.supplies },
     pace: "steady",
     rations: "fair",
+    activeBranch: routeBranches[0],
+    crossingResolved: false,
     log: [`Departed Riverbend Landing in ${departure.month}.`],
     ending: null,
     score: 0
@@ -170,7 +202,7 @@ export function travelToNextLandmark(journey: Journey): Journey {
     return finishJourney(journey);
   }
 
-  const distance = target.milesFromStart - journey.miles;
+  const distance = (target.milesFromStart - journey.miles) * (journey.activeBranch?.distanceModifier ?? 1);
   const days = Math.max(2, Math.ceil(distance / (journey.pace === "hard" ? 24 : 18)));
   const foodUsed = days * livingTravelers(journey).length * rationAmount(journey.rations);
   const hardship = hardshipFor(journey, target, days);
@@ -211,6 +243,41 @@ export function travelToNextLandmark(journey: Journey): Journey {
   }
 
   return updated;
+}
+
+export function chooseRouteBranch(journey: Journey, branchId: RouteBranch["id"]): Journey {
+  const branch = routeBranches.find((candidate) => candidate.id === branchId) ?? routeBranches[0];
+  return {
+    ...journey,
+    activeBranch: branch,
+    log: [`Route set to ${branch.name}: ${branch.risk}.`, ...journey.log]
+  };
+}
+
+export function resolveCrossing(journey: Journey, attempt: CrossingAttempt): Journey {
+  if (journey.ending || journey.crossingResolved) {
+    return journey;
+  }
+  const method = crossingProfile(attempt.method);
+  const risk = Math.max(0.05, method.baseRisk - (journey.profession === "scout" ? 0.08 : 0));
+  const failed = attempt.riskRoll < risk;
+  const money = Math.max(0, journey.supplies.money - method.cost);
+  const wagonLoss = failed ? method.wagonLoss : 0;
+  const message = failed
+    ? `${method.label} turned dangerous. The wagon took damage in the crossing.`
+    : `${method.label} proved ${method.signal}.`;
+  return {
+    ...journey,
+    crossingResolved: true,
+    wagon: {
+      integrity: Math.max(1, journey.wagon.integrity - wagonLoss)
+    },
+    supplies: {
+      ...journey.supplies,
+      money
+    },
+    log: [message, ...journey.log]
+  };
 }
 
 export function hunt(journey: Journey, attempt: HuntAttempt): Journey {
@@ -260,6 +327,19 @@ function finishJourney(journey: Journey): Journey {
     },
     score: arrived ? scoreJourney(journey) : 0
   };
+}
+
+function crossingProfile(method: CrossingMethod): { label: string; signal: string; baseRisk: number; cost: number; wagonLoss: number } {
+  if (method === "ferry") {
+    return { label: "Hiring the ferry", signal: "safe but costly", baseRisk: 0.04, cost: 12, wagonLoss: 8 };
+  }
+  if (method === "wait") {
+    return { label: "Waiting for lower water", signal: "slow but safer", baseRisk: 0.08, cost: 0, wagonLoss: 10 };
+  }
+  if (method === "caulk") {
+    return { label: "Caulking the wagon", signal: "uncertain in the current", baseRisk: 0.24, cost: 0, wagonLoss: 28 };
+  }
+  return { label: "Fording the river", signal: "quick but dangerous", baseRisk: 0.34, cost: 0, wagonLoss: 36 };
 }
 
 function scoreJourney(journey: Journey): number {

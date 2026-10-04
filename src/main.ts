@@ -1,9 +1,12 @@
 import "./styles.css";
 import {
   createJourney,
+  chooseRouteBranch,
   currentLandmark,
   nextLandmark,
+  resolveCrossing,
   route,
+  routeBranches,
   suppliesForProfession,
   hunt,
   travelToNextLandmark,
@@ -84,6 +87,7 @@ function renderJourney(): void {
 
   const landmark = currentLandmark(journey);
   const target = nextLandmark(journey);
+  const atCrossing = journey.landmarkIndex === 1 && !journey.crossingResolved;
   const travelerRows = journey.travelers
     .map(
       (traveler) => `
@@ -118,7 +122,13 @@ function renderJourney(): void {
         ${
           ending
             ? `<p class="score">Trail Score ${journey.score}</p><button id="new-journey">New Journey</button>`
-            : `<div class="actions"><button id="hunt">Hunt</button><button id="travel">${target ? `Travel to ${target.name}` : "Finish Journey"}</button></div>`
+            : `
+              ${journey.landmarkIndex === 0 ? branchControl(journey) : ""}
+              <div class="actions">
+                <button id="hunt">Hunt</button>
+                ${atCrossing ? `<button id="ferry">Hire ferry</button>` : `<button id="travel">${target ? `Travel to ${target.name}` : "Finish Journey"}</button>`}
+              </div>
+            `
         }
         <ol class="log">${journey.log.slice(0, 4).map((entry) => `<li>${entry}</li>`).join("")}</ol>
       </section>
@@ -134,10 +144,37 @@ function renderJourney(): void {
     journey = hunt(journey as Journey, { accuracy: 0.82, shots: 8 });
     renderJourney();
   });
+  document.querySelector<HTMLSelectElement>("#route-branch")?.addEventListener("change", (event) => {
+    const select = event.currentTarget;
+    if (!(select instanceof HTMLSelectElement)) {
+      return;
+    }
+    journey = chooseRouteBranch(journey as Journey, select.value as "valley-road" | "ridge-cutoff");
+    renderJourney();
+  });
+  document.querySelector<HTMLButtonElement>("#ferry")?.addEventListener("click", () => {
+    journey = resolveCrossing(journey as Journey, { method: "ferry", riskRoll: 0.92 });
+    renderJourney();
+  });
   document.querySelector<HTMLButtonElement>("#new-journey")?.addEventListener("click", () => {
     journey = null;
     renderDeparture();
   });
+}
+
+function branchControl(activeJourney: Journey): string {
+  return `
+    <label>Route branch
+      <select id="route-branch">
+        ${routeBranches
+          .map(
+            (branch) =>
+              `<option value="${branch.id}" ${activeJourney.activeBranch?.id === branch.id ? "selected" : ""}>${branch.name} - ${branch.risk}</option>`
+          )
+          .join("")}
+      </select>
+    </label>
+  `;
 }
 
 function drawOpeningScene(): void {

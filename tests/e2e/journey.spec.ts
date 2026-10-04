@@ -13,8 +13,12 @@ test("player can complete a thin departure-to-ending journey", async ({ page }) 
   await expect(page.getByRole("heading", { name: "Riverbend Landing" })).toBeVisible();
   await page.getByRole("button", { name: "Hunt" }).click();
   await expect(page.getByText(/spoiled before it could be packed/)).toBeVisible();
+  await page.getByLabel("Route branch").selectOption("ridge-cutoff");
+  await page.getByRole("button", { name: "Travel to Prairie Lantern Fort" }).click();
+  await page.getByRole("button", { name: "Hire ferry" }).click();
+  await expect(page.getByText(/safe but costly/)).toBeVisible();
 
-  for (let i = 0; i < 5; i += 1) {
+  for (let i = 0; i < 4; i += 1) {
     await page.getByRole("button", { name: /Travel to/ }).click();
   }
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createJourney, hunt, travelToNextLandmark } from "../../src/journey";
+import { chooseRouteBranch, createJourney, resolveCrossing, hunt, travelToNextLandmark } from "../../src/journey";
 
 describe("journey", () => {
   it("can travel from departure to arrival with the wagon and at least one traveler alive", () => {
@@ -47,5 +47,30 @@ describe("journey", () => {
     expect(hunted.supplies.ammunition).toBe(82);
     expect(hunted.supplies.food).toBe(760);
     expect(hunted.log[0]).toContain("spoiled before it could be packed");
+  });
+
+  it("applies route branches and resolves crossings with qualitative risk", () => {
+    let journey = createJourney({
+      profession: "homesteader",
+      month: "March",
+      travelerNames: ["Ada", "Ben", "Clara", "Drew"],
+      supplies: {
+        food: 620,
+        ammunition: 50,
+        medicine: 5,
+        clothing: 7,
+        spareParts: 4,
+        money: 20
+      }
+    });
+
+    journey = chooseRouteBranch(journey, "ridge-cutoff");
+    journey = travelToNextLandmark(journey);
+    journey = resolveCrossing(journey, { method: "ferry", riskRoll: 0.92 });
+
+    expect(journey.activeBranch?.id).toBe("ridge-cutoff");
+    expect(journey.supplies.money).toBe(8);
+    expect(journey.log[0]).toContain("safe but costly");
+    expect(journey.wagon.integrity).toBe(100);
   });
 });
