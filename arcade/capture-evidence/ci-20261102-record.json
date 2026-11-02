@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "workflowCommit": "484da612e0c8e1fd4ebb7ebe049f8c46bebde1e9",
+  "sourceCommit": "fb523e23b8052e332cdcb47180873ac90c909f66",
+  "runId": "41408573316",
+  "url": "http://127.0.0.1:4231/",
+  "inputs": {
+    "index.html": "2e45e17648781b8e2d73cef9da60ee752f5f7908ee03462151b331c2b43f3241"
+  },
+  "browser": "153.0.8010.12",
+  "viewport": {
+    "width": 1280,
+    "height": 1000
+  },
+  "screenshots": [
+    "trailward-01.png",
+    "trailward-02.png"
+  ]
+}

@@ -1,6 +1,43 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "gameId": "kata-oregon-trail-clone-codex-openai-gpt-5.5-light",
   "playUrl": "https://intrepion.github.io/kata-oregon-trail-clone-codex-openai-gpt-5.5-light/",
-  "screenshots": []
+  "screenshots": [
+    {
+      "path": "arcade/screenshots/ci-20261102-01.jpg",
+      "sha256": "2d9fe428fd71dc62f238aa5ae814f257e9a3a6699ffc99452dccc4a10e37b757",
+      "alt": "Trailward gameplay, view 1",
+      "provenance": {
+        "kind": "ci_gameplay_capture",
+        "sourcePath": "arcade/capture-evidence/ci-20261102-01.png",
+        "sourceSha256": "f16ea0c3c8c133d30524b18652ec93b0364ed44668c9e9957cbcf3bc94c81ab8",
+        "captureCommit": "fb523e23b8052e332cdcb47180873ac90c909f66",
+        "workflowRunId": "41408573316",
+        "inputHashes": {
+          "index.html": "2e45e17648781b8e2d73cef9da60ee752f5f7908ee03462151b331c2b43f3241"
+        },
+        "publishedFilesVerifiedAt": "2026-11-02T19:01:20Z",
+        "captureRecordPath": "arcade/capture-evidence/ci-20261102-record.json",
+        "captureRecordSha256": "c5d1acaaf41f9eeb1b3693efde97af0b12e183d702ddfb78fdc734da5f4c64c6"
+      }
+    },
+    {
+      "path": "arcade/screenshots/ci-20261102-02.jpg",
+      "sha256": "edaba0862fd7de67d03e30e061a34a7a417b6e7a1becf72389ac9f7dbd56af29",
+      "alt": "Trailward gameplay, view 2",
+      "provenance": {
+        "kind": "ci_gameplay_capture",
+        "sourcePath": "arcade/capture-evidence/ci-20261102-02.png",
+        "sourceSha256": "65ca865bc58cd1acaf36ea5f88a53a0b2bf4aa8cdbf4744c88cffd62b7145ef6",
+        "captureCommit": "fb523e23b8052e332cdcb47180873ac90c909f66",
+        "workflowRunId": "41408573316",
+        "inputHashes": {
+          "index.html": "2e45e17648781b8e2d73cef9da60ee752f5f7908ee03462151b331c2b43f3241"
+        },
+        "publishedFilesVerifiedAt": "2026-11-02T19:01:20Z",
+        "captureRecordPath": "arcade/capture-evidence/ci-20261102-record.json",
+        "captureRecordSha256": "c5d1acaaf41f9eeb1b3693efde97af0b12e183d702ddfb78fdc734da5f4c64c6"
+      }
+    }
+  ]
 }
